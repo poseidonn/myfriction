@@ -25,6 +25,7 @@ Friction is a professional 2D motion graphics application.
 # Bu kısım kaynak kodu açar
 %prep
 %setup -q -n myfriction
+git submodule update --init --recursive
 
 %build
 %cmake
