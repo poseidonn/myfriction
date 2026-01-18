@@ -1,5 +1,5 @@
 Name:           friction
-Version:        0.0.1
+Version:        {{{ git_dir_version }}}
 Release:        1%{?dist}
 Summary:        A modern 2D motion graphics app
 
