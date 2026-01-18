@@ -24,10 +24,14 @@ BuildRequires:  git
 %description
 Friction is a professional 2D motion graphics application.
 
-# Bu kısım kaynak kodu açar
 %prep
-%setup -q -n myfriction
-git config --global --add safe.directory "*"
+# Mevcut dizini temizle ve kodu doğrudan git ile çek
+cd ..
+rm -rf myfriction
+git clone --recursive https://github.com/poseidonn/myfriction.git myfriction
+cd myfriction
+
+# Alt modüllerin tam indiğinden emin ol
 git submodule update --init --recursive
 
 %build
