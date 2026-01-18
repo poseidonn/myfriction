@@ -1,0 +1,34 @@
+Name:           friction
+Version:        0.0.1
+Release:        1%{?dist}
+Summary:        A modern 2D motion graphics app
+
+License:        GPLv3
+URL:            https://github.com/friction2d/friction
+# Copr bunu sizin için orijinal repodan çekecek
+Source0:        %{name}-%{version}.tar.gz
+
+BuildRequires:  cmake
+BuildRequires:  gcc-c++
+BuildRequires:  qt5-qtbase-devel
+BuildRequires:  qt5-qtmultimedia-devel
+BuildRequires:  qt5-qtsvg-devel
+BuildRequires:  ffmpeg-devel
+BuildRequires:  mesa-libGL-devel
+
+%description
+Friction is a professional 2D motion graphics application.
+
+%prep
+# Bu kısım kaynak kodu açar
+%autosetup
+
+%build
+%cmake
+%cmake_build
+
+%install
+%cmake_install
+
+%files
+%{_bindir}/friction
