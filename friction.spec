@@ -4,9 +4,9 @@ Release:        1%{?dist}
 Summary:        A modern 2D motion graphics app
 
 License:        GPLv3
-URL:            https://github.com/friction2d/friction
+URL:            https://github.com/poseidonn/myfriction.git
 # Copr bunu sizin için orijinal repodan çekecek
-Source0:        %{name}-%{version}.tar.gz
+Source:         {{{ git_dir_pack }}}
 
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
