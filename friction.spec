@@ -13,7 +13,10 @@ BuildRequires:  gcc-c++
 BuildRequires:  qt5-qtbase-devel
 BuildRequires:  qt5-qtmultimedia-devel
 BuildRequires:  qt5-qtsvg-devel
-BuildRequires:  ffmpeg-devel
+BuildRequires:  pkgconfig(libavcodec)
+BuildRequires:  pkgconfig(libavformat)
+BuildRequires:  pkgconfig(libswscale)
+BuildRequires:  pkgconfig(libavutil)
 BuildRequires:  mesa-libGL-devel
 
 %description
