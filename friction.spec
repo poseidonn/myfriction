@@ -35,12 +35,14 @@ cd myfriction
 git submodule update --init --recursive
 
 %build
+cd myfriction
 export CC=clang
 export CXX=clang++
 %cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 %cmake_build
 
 %install
+cd myfriction
 %cmake_install
 
 %files
