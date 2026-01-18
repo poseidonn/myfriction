@@ -19,6 +19,7 @@ BuildRequires:  pkgconfig(libavformat)
 BuildRequires:  pkgconfig(libswscale)
 BuildRequires:  pkgconfig(libavutil)
 BuildRequires:  mesa-libGL-devel
+BuildRequires:  git
 
 %description
 Friction is a professional 2D motion graphics application.
@@ -26,6 +27,7 @@ Friction is a professional 2D motion graphics application.
 # Bu kısım kaynak kodu açar
 %prep
 %setup -q -n myfriction
+git config --global --add safe.directory "*"
 git submodule update --init --recursive
 
 %build
