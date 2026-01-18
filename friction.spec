@@ -22,9 +22,9 @@ BuildRequires:  mesa-libGL-devel
 %description
 Friction is a professional 2D motion graphics application.
 
-%prep
 # Bu kısım kaynak kodu açar
-%autosetup
+%prep
+%setup -q -n myfriction
 
 %build
 %cmake
