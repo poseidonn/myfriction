@@ -9,7 +9,8 @@ URL:            https://github.com/poseidonn/myfriction.git
 Source:         {{{ git_dir_pack }}}
 
 BuildRequires:  cmake
-BuildRequires:  gcc-c++
+BuildRequires:  clang
+BuildRequires:  llvm
 BuildRequires:  qt5-qtbase-devel
 BuildRequires:  qt5-qtmultimedia-devel
 BuildRequires:  qt5-qtsvg-devel
@@ -28,7 +29,9 @@ Friction is a professional 2D motion graphics application.
 git submodule update --init --recursive
 
 %build
-%cmake
+export CC=clang
+export CXX=clang++
+%cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 %cmake_build
 
 %install
