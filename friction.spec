@@ -11,6 +11,12 @@ Source:         {{{ git_dir_pack }}}
 BuildRequires:  cmake
 BuildRequires:  clang
 BuildRequires:  llvm
+BuildRequires:  ninja-build
+BuildRequires:  fontconfig-devel 
+BuildRequires:  freetype-devel
+BuildRequires:  libunwind-devel
+BuildRequires:  libatomic
+BuildRequires:  python3
 BuildRequires:  qt5-qtbase-devel
 BuildRequires:  qt5-qtmultimedia-devel
 BuildRequires:  qt5-qtsvg-devel
@@ -39,7 +45,7 @@ export CC=clang
 export CXX=clang++
 
 # Fedora'nın standart cmake makrosunu kullanırken dizini belirtiyoruz
-%cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -S . -B redhat-linux-build
+%cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -S . -B redhat-linux-build
 %cmake_build
 
 %install
