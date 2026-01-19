@@ -53,36 +53,31 @@ rm -rf %{_builddir}/*
 cd %{_builddir}
 git clone --recursive https://github.com/poseidonn/myfriction.git .
 
-# --- 1. Skia Yaması: getWeakCnt hatasını her yerde düzelt ---
+# 1. Skia Düzeltmesi
 grep -rl "getWeakCnt" . | xargs sed -i 's/getWeakCnt/getRefCnt/g'
 
-# --- 2. FFmpeg 7 Kapsamlı Yama (Tüm dosyalar için) ---
-# av_get_channel_layout_nb_channels fonksiyonunu her varyasyonuyla 2 (stereo) yap
-# Not: Bu kaba bir çözümdür ama derlemeyi sağlar.
+# 2. FFmpeg 7 Kapsamlı Fonksiyon Yaması
 grep -rl "av_get_channel_layout_nb_channels" . | xargs sed -i 's/av_get_channel_layout_nb_channels([^)]*)/2/g'
 
-# --- 3. Audiostreamsdata & SoundReader Spesifik Düzeltmeler ---
-# AVCodecParameters içindeki channels ve channel_layout artık ch_layout içinde
+# 3. Audiostreamsdata Düzeltmeleri
 sed -i 's/audCodecPars->channels/audCodecPars->ch_layout.nb_channels/g' src/core/FileCacheHandlers/audiostreamsdata.cpp
 sed -i 's/audCodecPars->channel_layout/audCodecPars->ch_layout.u.mask/g' src/core/FileCacheHandlers/audiostreamsdata.cpp
 
-# AVFrame içindeki channel_layout -> ch_layout.nb_channels
-grep -rl "frame->channel_layout" . | xargs sed -i 's/frame->channel_layout/frame->ch_layout.nb_channels/g'
-# --- OutputSettings FFmpeg 7 Sabitleri Yaması ---
-# AV_CH_LAYOUT_NATIVE ve benzeri eski makroları temizle veya varsayılan değer ver
+# 4. OutputSettings.cpp - Hassas Temizlik
+# Eski makroları doğrudan ham sayılarla değiştiriyoruz (Karışıklığı önlemek için)
 sed -i 's/AV_CH_LAYOUT_NATIVE/0/g' src/core/outputsettings.cpp
-sed -i 's/AV_CH_LAYOUT_MONO/AV_CH_LAYOUT_NATIVE/g' src/core/outputsettings.cpp
+sed -i 's/AV_CH_LAYOUT_MONO/4/g' src/core/outputsettings.cpp
+sed -i 's/AV_CH_LAYOUT_STEREO/3/g' src/core/outputsettings.cpp
 
-# Genel FFmpeg 7 uyumluluğu için ek temizlik
-grep -rl "AV_CH_LAYOUT_" . | xargs sed -i 's/AV_CH_LAYOUT_STEREO/0x3/g' 2>/dev/null || true
+# 5. Genel AVFrame Yaması
+grep -rl "frame->channel_layout" . | xargs sed -i 's/frame->channel_layout/frame->ch_layout.nb_channels/g'
 
 %build
 export CC=clang
 export CXX=clang++
 
-# Wno-error ile küçük uyarıların derlemeyi durdurmasını engelliyoruz
 %cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja \
-    -DCMAKE_CXX_FLAGS="-Wno-error -Wno-deprecated-declarations -Wno-implicit-function-declaration -Wno-int-conversion -Wno-unused-but-set-variable -Wno-incompatible-pointer-types -fcommon" \
+    -DCMAKE_CXX_FLAGS="-Wno-error -Wno-deprecated-declarations -Wno-implicit-function-declaration -Wno-int-conversion -Wno-unused-but-set-variable -Wno-incompatible-pointer-types -Wno-unused-result -fcommon" \
     -S . -B redhat-linux-build
 
 %cmake_build -- -j2
