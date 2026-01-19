@@ -66,13 +66,20 @@ grep -rl "av_get_channel_layout_nb_channels" . | xargs sed -i 's/av_get_channel_
 # 2. AVFrame->channel_layout -> ch_layout.nb_channels (FFmpeg 7 standardı)
 grep -rl "channel_layout" src/core | xargs sed -i 's/frame->channel_layout/frame->ch_layout.nb_channels/g'
 
+# --- Audiostreamsdata FFmpeg 7 Yaması ---
+# audCodecPars->channels yerine ch_layout.nb_channels kullan
+sed -i 's/audCodecPars->channels/audCodecPars->ch_layout.nb_channels/g' src/core/FileCacheHandlers/audiostreamsdata.cpp
+
+# audCodecPars->channel_layout yerine ch_layout.u.mask kullan (Eski sistem maskesine en yakın karşılık)
+sed -i 's/audCodecPars->channel_layout/audCodecPars->ch_layout.u.mask/g' src/core/FileCacheHandlers/audiostreamsdata.cpp
+
 %build
 export CC=clang
 export CXX=clang++
 
 # Skia derlemesi sırasında çıkan krtik hataları görmezden gelmek için ek bayraklar
 %cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja \
-    -DCMAKE_CXX_FLAGS="-Wno-error -Wno-deprecated-declarations -Wno-implicit-function-declaration -fcommon" \
+    -DCMAKE_CXX_FLAGS="-Wno-error -Wno-deprecated-declarations -Wno-implicit-function-declaration -Wno-int-conversion -fcommon" \
     -S . -B redhat-linux-build
 
 %cmake_build -- -j2
