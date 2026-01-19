@@ -26,6 +26,7 @@ BuildRequires:  pkgconfig(libswscale)
 BuildRequires:  pkgconfig(libavutil)
 BuildRequires:  mesa-libGL-devel
 BuildRequires:  git
+BuildRequires:  expat
 
 %description
 Friction is a professional 2D motion graphics application.
