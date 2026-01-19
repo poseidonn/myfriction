@@ -63,12 +63,19 @@ sed -i 's/audCodecPars->channels/audCodecPars->ch_layout.nb_channels/g' src/core
 sed -i 's/audCodecPars->channel_layout/audCodecPars->ch_layout.u.mask/g' src/core/FileCacheHandlers/audiostreamsdata.cpp
 
 # 4. OutputSettings.cpp - Kelime Sınırı Kullanarak Hassas Yama
-# \< ve \> işaretleri kelimenin tam eşleşmesini sağlar, böylece _DOWNMIX gibi ekler bozulmaz.
 sed -i 's/\<AV_CH_LAYOUT_NATIVE\>/0/g' src/core/outputsettings.cpp
 sed -i 's/\<AV_CH_LAYOUT_MONO\>/4/g' src/core/outputsettings.cpp
 sed -i 's/\<AV_CH_LAYOUT_STEREO\>/3/g' src/core/outputsettings.cpp
 
-# 5. Genel AVFrame Yaması
+# 5. Videoencoder.cpp Düzeltmeleri (YENİ)
+# AVCodecContext ve AVFrame üzerindeki eski alanları yeni ch_layout yapısına yönlendiriyoruz
+sed -i 's/c->channel_layout =/c->ch_layout.u.mask =/g' src/core/videoencoder.cpp
+sed -i 's/c->channels =/c->ch_layout.nb_channels =/g' src/core/videoencoder.cpp
+sed -i 's/c->channels,/c->ch_layout.nb_channels,/g' src/core/videoencoder.cpp
+sed -i 's/c->channel_layout,/c->ch_layout.u.mask,/g' src/core/videoencoder.cpp
+sed -i 's/frame->channels =/frame->ch_layout.nb_channels =/g' src/core/videoencoder.cpp
+
+# 6. Genel AVFrame Yaması
 grep -rl "frame->channel_layout" . | xargs sed -i 's/frame->channel_layout/frame->ch_layout.nb_channels/g'
 
 %build
