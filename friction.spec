@@ -46,7 +46,6 @@ BuildRequires:  libwebp-devel
 
 %description
 Friction is a professional 2D motion graphics application.
-
 %prep
 # Temizlik ve Clone
 rm -rf %{_builddir}/*
@@ -63,11 +62,11 @@ grep -rl "av_get_channel_layout_nb_channels" . | xargs sed -i 's/av_get_channel_
 sed -i 's/audCodecPars->channels/audCodecPars->ch_layout.nb_channels/g' src/core/FileCacheHandlers/audiostreamsdata.cpp
 sed -i 's/audCodecPars->channel_layout/audCodecPars->ch_layout.u.mask/g' src/core/FileCacheHandlers/audiostreamsdata.cpp
 
-# 4. OutputSettings.cpp - Hassas Temizlik
-# Eski makroları doğrudan ham sayılarla değiştiriyoruz (Karışıklığı önlemek için)
-sed -i 's/AV_CH_LAYOUT_NATIVE/0/g' src/core/outputsettings.cpp
-sed -i 's/AV_CH_LAYOUT_MONO/4/g' src/core/outputsettings.cpp
-sed -i 's/AV_CH_LAYOUT_STEREO/3/g' src/core/outputsettings.cpp
+# 4. OutputSettings.cpp - Kelime Sınırı Kullanarak Hassas Yama
+# \< ve \> işaretleri kelimenin tam eşleşmesini sağlar, böylece _DOWNMIX gibi ekler bozulmaz.
+sed -i 's/\<AV_CH_LAYOUT_NATIVE\>/0/g' src/core/outputsettings.cpp
+sed -i 's/\<AV_CH_LAYOUT_MONO\>/4/g' src/core/outputsettings.cpp
+sed -i 's/\<AV_CH_LAYOUT_STEREO\>/3/g' src/core/outputsettings.cpp
 
 # 5. Genel AVFrame Yaması
 grep -rl "frame->channel_layout" . | xargs sed -i 's/frame->channel_layout/frame->ch_layout.nb_channels/g'
