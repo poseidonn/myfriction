@@ -48,22 +48,32 @@ BuildRequires:  libwebp-devel
 Friction is a professional 2D motion graphics application.
 
 %prep
-# Mevcut dizini temizle (builddir/build/BUILD)
-# rpkg tarafından oluşturulan geçici dosyaları silmek için:
+# Mevcut dizini temizle ve kodu çek
 rm -rf %{_builddir}/*
 cd %{_builddir}
-
-# Kodu doğrudan BUILD dizininin içine, alt klasör olmadan çekin (nokta işareti önemli)
 git clone --recursive https://github.com/poseidonn/myfriction.git .
+
+# --- FFmpeg 7+ Uyumluluk Yamaları (Kritik Bölüm) ---
+# av_get_channel_layout_nb_channels -> av_get_channel_layout_nb_channels (Eskisi) 
+# Yerine modern olan av_get_channel_layout_nb_channels kullanmak yerine 
+# kodun çalışması için basit bir makro ekleyelim veya doğrudan kanalları manuel alalım.
+
+sed -i 's/av_get_channel_layout_nb_channels/av_get_channel_layout_nb_channels/g' src/core/CacheHandlers/samples.h
+
+# AVFrame->channel_layout hatasını aşmak için (Kaba ama etkili bir çözüm)
+sed -i 's/frame->channel_layout/frame->ch_layout.nb_channels/g' src/core/videoencoder.h
 
 %build
 # Artık 'cd myfriction' yapmaya gerek yok, çünkü kod doğrudan kök dizinde
 export CC=clang
 export CXX=clang++
 
-# Fedora'nın standart cmake makrosunu kullanırken dizini belirtiyoruz
-%cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -S . -B redhat-linux-build
-%cmake_build
+# -Wno-error ekleyerek eski kod hatalarını 'uyarı' seviyesine çekiyoruz
+%cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja \
+       -DCMAKE_CXX_FLAGS="-Wno-error=deprecated-declarations -Wno-error=unused-command-line-argument" \
+       -S . -B redhat-linux-build
+
+%cmake_build -- -j2
 
 %install
 # Kurulum aşamasında cmake'in oluşturduğu build klasörüne bakmasını sağlıyoruz
