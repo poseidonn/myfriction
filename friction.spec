@@ -39,6 +39,10 @@ BuildRequires:  libXcursor-devel
 BuildRequires:  libXi-devel
 BuildRequires:  libXinerama-devel
 BuildRequires:  libXrandr-devel
+BuildRequires:  libstdc++-static
+BuildRequires:  libjpeg-turbo-devel
+BuildRequires:  libpng-devel
+BuildRequires:  libwebp-devel
 
 %description
 Friction is a professional 2D motion graphics application.
