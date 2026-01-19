@@ -25,24 +25,25 @@ BuildRequires:  git
 Friction is a professional 2D motion graphics application.
 
 %prep
-# Mevcut dizini temizle ve kodu doğrudan git ile çek
-cd ..
-rm -rf myfriction
-git clone --recursive https://github.com/poseidonn/myfriction.git myfriction
-cd myfriction
+# Mevcut dizini temizle (builddir/build/BUILD)
+# rpkg tarafından oluşturulan geçici dosyaları silmek için:
+rm -rf %{_builddir}/*
+cd %{_builddir}
 
-# Alt modüllerin tam indiğinden emin ol
-git submodule update --init --recursive
+# Kodu doğrudan BUILD dizininin içine, alt klasör olmadan çekin (nokta işareti önemli)
+git clone --recursive https://github.com/poseidonn/myfriction.git .
 
 %build
-cd myfriction
+# Artık 'cd myfriction' yapmaya gerek yok, çünkü kod doğrudan kök dizinde
 export CC=clang
 export CXX=clang++
-%cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+
+# Fedora'nın standart cmake makrosunu kullanırken dizini belirtiyoruz
+%cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -S . -B redhat-linux-build
 %cmake_build
 
 %install
-cd myfriction
+# Kurulum aşamasında cmake'in oluşturduğu build klasörüne bakmasını sağlıyoruz
 %cmake_install
 
 %files
