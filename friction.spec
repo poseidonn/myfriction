@@ -28,6 +28,17 @@ BuildRequires:  mesa-libGL-devel
 BuildRequires:  git
 BuildRequires:  expat-devel
 BuildRequires:  libuuid-devel
+# Mevcutlara ekleyin
+BuildRequires:  libjpeg-turbo-devel
+BuildRequires:  libpng-devel
+BuildRequires:  libwebp-devel
+BuildRequires:  zlib-devel
+BuildRequires:  libatomic
+BuildRequires:  mesa-libGLU-devel
+BuildRequires:  libXcursor-devel
+BuildRequires:  libXi-devel
+BuildRequires:  libXinerama-devel
+BuildRequires:  libXrandr-devel
 
 %description
 Friction is a professional 2D motion graphics application.
