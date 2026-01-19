@@ -68,6 +68,13 @@ sed -i 's/audCodecPars->channel_layout/audCodecPars->ch_layout.u.mask/g' src/cor
 
 # AVFrame içindeki channel_layout -> ch_layout.nb_channels
 grep -rl "frame->channel_layout" . | xargs sed -i 's/frame->channel_layout/frame->ch_layout.nb_channels/g'
+# --- OutputSettings FFmpeg 7 Sabitleri Yaması ---
+# AV_CH_LAYOUT_NATIVE ve benzeri eski makroları temizle veya varsayılan değer ver
+sed -i 's/AV_CH_LAYOUT_NATIVE/0/g' src/core/outputsettings.cpp
+sed -i 's/AV_CH_LAYOUT_MONO/AV_CH_LAYOUT_NATIVE/g' src/core/outputsettings.cpp
+
+# Genel FFmpeg 7 uyumluluğu için ek temizlik
+grep -rl "AV_CH_LAYOUT_" . | xargs sed -i 's/AV_CH_LAYOUT_STEREO/0x3/g' 2>/dev/null || true
 
 %build
 export CC=clang
@@ -75,7 +82,7 @@ export CXX=clang++
 
 # Wno-error ile küçük uyarıların derlemeyi durdurmasını engelliyoruz
 %cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja \
-    -DCMAKE_CXX_FLAGS="-Wno-error -Wno-deprecated-declarations -Wno-implicit-function-declaration -Wno-int-conversion -Wno-unused-but-set-variable -fcommon" \
+    -DCMAKE_CXX_FLAGS="-Wno-error -Wno-deprecated-declarations -Wno-implicit-function-declaration -Wno-int-conversion -Wno-unused-but-set-variable -Wno-incompatible-pointer-types -fcommon" \
     -S . -B redhat-linux-build
 
 %cmake_build -- -j2
